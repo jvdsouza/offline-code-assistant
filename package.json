@@ -1,0 +1,36 @@
+{
+  "name": "offline-code-assistant",
+  "version": "0.1.0",
+  "description": "A local, offline coding agent: RAG over your codebase + tool calling, powered by Ollama.",
+  "type": "module",
+  "bin": {
+    "oca": "dist/cli.js"
+  },
+  "scripts": {
+    "oca": "tsx src/cli.ts",
+    "dev": "tsx src/cli.ts chat .",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "callgraph": "tsx scripts/callgraph.ts",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@lancedb/lancedb": "^0.41.0",
+    "apache-arrow": "^21.2.0",
+    "commander": "^15.1.0",
+    "diff": "^9.0.0",
+    "ignore": "^7.0.17",
+    "ollama": "^0.6.4",
+    "picocolors": "^1.1.1",
+    "typescript": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.10",
+    "tsx": "^4.23.15",
+    "vitest": "^5.1.2"
+  }
+}

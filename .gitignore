@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.env
+# Local vector indexes (default data dir is ~/.offline-code-assistant, but allow a local one too)
+.oca/

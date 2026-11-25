@@ -1,0 +1,2032 @@
+{
+  "generatedAt": "2026-11-25T12:30:44.414Z",
+  "layers": [
+    "CLI",
+    "Agent",
+    "Tools",
+    "Retrieval",
+    "Index",
+    "Ingest",
+    "Store & LLM",
+    "Utilities",
+    "External"
+  ],
+  "nodes": [
+    {
+      "label": "src/cli.ts (module)",
+      "kind": "module",
+      "group": "src/cli.ts",
+      "layer": "CLI",
+      "file": "src/cli.ts",
+      "line": 11,
+      "id": "src/cli.ts (module)"
+    },
+    {
+      "id": "cli index",
+      "label": "cli index",
+      "kind": "cli",
+      "group": "src/cli.ts",
+      "layer": "CLI",
+      "file": "src/cli.ts",
+      "line": 20
+    },
+    {
+      "id": "cli chat",
+      "label": "cli chat",
+      "kind": "cli",
+      "group": "src/cli.ts",
+      "layer": "CLI",
+      "file": "src/cli.ts",
+      "line": 31
+    },
+    {
+      "id": "cli ask",
+      "label": "cli ask",
+      "kind": "cli",
+      "group": "src/cli.ts",
+      "layer": "CLI",
+      "file": "src/cli.ts",
+      "line": 69
+    },
+    {
+      "id": "cli doctor",
+      "label": "cli doctor",
+      "kind": "cli",
+      "group": "src/cli.ts",
+      "layer": "CLI",
+      "file": "src/cli.ts",
+      "line": 80
+    },
+    {
+      "label": "makeAgent",
+      "kind": "function",
+      "group": "src/cli.ts",
+      "layer": "CLI",
+      "file": "src/cli.ts",
+      "line": 99,
+      "exported": false,
+      "id": "makeAgent"
+    },
+    {
+      "label": "runTurn",
+      "kind": "function",
+      "group": "src/cli.ts",
+      "layer": "CLI",
+      "file": "src/cli.ts",
+      "line": 106,
+      "exported": false,
+      "id": "runTurn"
+    },
+    {
+      "label": "syncWithProgress",
+      "kind": "function",
+      "group": "src/cli.ts",
+      "layer": "CLI",
+      "file": "src/cli.ts",
+      "line": 128,
+      "exported": false,
+      "id": "syncWithProgress"
+    },
+    {
+      "id": "Agent.constructor",
+      "label": "Agent.constructor",
+      "kind": "method",
+      "group": "Agent",
+      "layer": "Agent",
+      "file": "src/agent/agent.ts",
+      "line": 28,
+      "exported": true
+    },
+    {
+      "id": "Agent.reset",
+      "label": "Agent.reset",
+      "kind": "method",
+      "group": "Agent",
+      "layer": "Agent",
+      "file": "src/agent/agent.ts",
+      "line": 39,
+      "exported": true
+    },
+    {
+      "id": "Agent.run",
+      "label": "Agent.run",
+      "kind": "method",
+      "group": "Agent",
+      "layer": "Agent",
+      "file": "src/agent/agent.ts",
+      "line": 43,
+      "exported": true
+    },
+    {
+      "id": "Agent.trimmedHistory",
+      "label": "Agent.trimmedHistory",
+      "kind": "method",
+      "group": "Agent",
+      "layer": "Agent",
+      "file": "src/agent/agent.ts",
+      "line": 83,
+      "exported": true
+    },
+    {
+      "label": "systemPrompt",
+      "kind": "function",
+      "group": "src/agent/prompts.ts",
+      "layer": "Agent",
+      "file": "src/agent/prompts.ts",
+      "line": 1,
+      "exported": true,
+      "id": "systemPrompt"
+    },
+    {
+      "label": "withRetrievedContext",
+      "kind": "function",
+      "group": "src/agent/prompts.ts",
+      "layer": "Agent",
+      "file": "src/agent/prompts.ts",
+      "line": 15,
+      "exported": true,
+      "id": "withRetrievedContext"
+    },
+    {
+      "id": "read_file",
+      "label": "read_file",
+      "kind": "tool",
+      "group": "src/agent/tools/fsTools.ts",
+      "layer": "Tools",
+      "file": "src/agent/tools/fsTools.ts",
+      "line": 8,
+      "exported": true
+    },
+    {
+      "id": "list_files",
+      "label": "list_files",
+      "kind": "tool",
+      "group": "src/agent/tools/fsTools.ts",
+      "layer": "Tools",
+      "file": "src/agent/tools/fsTools.ts",
+      "line": 31,
+      "exported": true
+    },
+    {
+      "id": "grep",
+      "label": "grep",
+      "kind": "tool",
+      "group": "src/agent/tools/fsTools.ts",
+      "layer": "Tools",
+      "file": "src/agent/tools/fsTools.ts",
+      "line": 48,
+      "exported": true
+    },
+    {
+      "id": "propose_edit",
+      "label": "propose_edit",
+      "kind": "tool",
+      "group": "src/agent/tools/proposeEdit.ts",
+      "layer": "Tools",
+      "file": "src/agent/tools/proposeEdit.ts",
+      "line": 8,
+      "exported": true
+    },
+    {
+      "label": "colorize",
+      "kind": "function",
+      "group": "src/agent/tools/proposeEdit.ts",
+      "layer": "Tools",
+      "file": "src/agent/tools/proposeEdit.ts",
+      "line": 56,
+      "exported": false,
+      "id": "colorize"
+    },
+    {
+      "id": "search_code",
+      "label": "search_code",
+      "kind": "tool",
+      "group": "src/agent/tools/searchCode.ts",
+      "layer": "Tools",
+      "file": "src/agent/tools/searchCode.ts",
+      "line": 4,
+      "exported": true
+    },
+    {
+      "label": "defineTool",
+      "kind": "function",
+      "group": "src/agent/tools/types.ts",
+      "layer": "Tools",
+      "file": "src/agent/tools/types.ts",
+      "line": 21,
+      "exported": true,
+      "id": "defineTool"
+    },
+    {
+      "label": "str",
+      "kind": "function",
+      "group": "src/agent/tools/types.ts",
+      "layer": "Tools",
+      "file": "src/agent/tools/types.ts",
+      "line": 34,
+      "exported": true,
+      "id": "str"
+    },
+    {
+      "label": "int",
+      "kind": "function",
+      "group": "src/agent/tools/types.ts",
+      "layer": "Tools",
+      "file": "src/agent/tools/types.ts",
+      "line": 35,
+      "exported": true,
+      "id": "int"
+    },
+    {
+      "id": "Retriever.constructor",
+      "label": "Retriever.constructor",
+      "kind": "method",
+      "group": "Retriever",
+      "layer": "Retrieval",
+      "file": "src/retrieval/retriever.ts",
+      "line": 9,
+      "exported": true
+    },
+    {
+      "id": "Retriever.retrieve",
+      "label": "Retriever.retrieve",
+      "kind": "method",
+      "group": "Retriever",
+      "layer": "Retrieval",
+      "file": "src/retrieval/retriever.ts",
+      "line": 11,
+      "exported": true
+    },
+    {
+      "id": "Retriever.format",
+      "label": "Retriever.format",
+      "kind": "method",
+      "group": "Retriever",
+      "layer": "Retrieval",
+      "file": "src/retrieval/retriever.ts",
+      "line": 18,
+      "exported": true
+    },
+    {
+      "id": "RepoIndex.constructor",
+      "label": "RepoIndex.constructor",
+      "kind": "method",
+      "group": "RepoIndex",
+      "layer": "Index",
+      "file": "src/ingest/indexer.ts",
+      "line": 29,
+      "exported": true
+    },
+    {
+      "id": "RepoIndex.open",
+      "label": "RepoIndex.open",
+      "kind": "method",
+      "group": "RepoIndex",
+      "layer": "Index",
+      "file": "src/ingest/indexer.ts",
+      "line": 37,
+      "exported": true
+    },
+    {
+      "id": "RepoIndex.sync",
+      "label": "RepoIndex.sync",
+      "kind": "method",
+      "group": "RepoIndex",
+      "layer": "Index",
+      "file": "src/ingest/indexer.ts",
+      "line": 60,
+      "exported": true
+    },
+    {
+      "id": "RepoIndex.updateFiles",
+      "label": "RepoIndex.updateFiles",
+      "kind": "method",
+      "group": "RepoIndex",
+      "layer": "Index",
+      "file": "src/ingest/indexer.ts",
+      "line": 91,
+      "exported": true
+    },
+    {
+      "id": "RepoIndex.search",
+      "label": "RepoIndex.search",
+      "kind": "method",
+      "group": "RepoIndex",
+      "layer": "Index",
+      "file": "src/ingest/indexer.ts",
+      "line": 106,
+      "exported": true
+    },
+    {
+      "id": "RepoIndex.chunkCount",
+      "label": "RepoIndex.chunkCount",
+      "kind": "method",
+      "group": "RepoIndex",
+      "layer": "Index",
+      "file": "src/ingest/indexer.ts",
+      "line": 111,
+      "exported": true
+    },
+    {
+      "id": "RepoIndex.embedAndStore",
+      "label": "RepoIndex.embedAndStore",
+      "kind": "method",
+      "group": "RepoIndex",
+      "layer": "Index",
+      "file": "src/ingest/indexer.ts",
+      "line": 115,
+      "exported": true
+    },
+    {
+      "id": "RepoIndex.saveManifest",
+      "label": "RepoIndex.saveManifest",
+      "kind": "method",
+      "group": "RepoIndex",
+      "layer": "Index",
+      "file": "src/ingest/indexer.ts",
+      "line": 138,
+      "exported": true
+    },
+    {
+      "label": "sha1",
+      "kind": "function",
+      "group": "src/ingest/indexer.ts",
+      "layer": "Index",
+      "file": "src/ingest/indexer.ts",
+      "line": 143,
+      "exported": false,
+      "id": "sha1"
+    },
+    {
+      "label": "languageFor",
+      "kind": "function",
+      "group": "src/ingest/chunker.ts",
+      "layer": "Ingest",
+      "file": "src/ingest/chunker.ts",
+      "line": 18,
+      "exported": true,
+      "id": "languageFor"
+    },
+    {
+      "label": "chunkFile",
+      "kind": "function",
+      "group": "src/ingest/chunker.ts",
+      "layer": "Ingest",
+      "file": "src/ingest/chunker.ts",
+      "line": 26,
+      "exported": true,
+      "id": "chunkFile"
+    },
+    {
+      "label": "chunkTypeScript",
+      "kind": "function",
+      "group": "src/ingest/chunker.ts",
+      "layer": "Ingest",
+      "file": "src/ingest/chunker.ts",
+      "line": 42,
+      "exported": true,
+      "id": "chunkTypeScript"
+    },
+    {
+      "label": "describe",
+      "kind": "function",
+      "group": "src/ingest/chunker.ts",
+      "layer": "Ingest",
+      "file": "src/ingest/chunker.ts",
+      "line": 113,
+      "exported": false,
+      "id": "describe"
+    },
+    {
+      "label": "splitIfLarge",
+      "kind": "function",
+      "group": "src/ingest/chunker.ts",
+      "layer": "Ingest",
+      "file": "src/ingest/chunker.ts",
+      "line": 140,
+      "exported": false,
+      "id": "splitIfLarge"
+    },
+    {
+      "label": "chunkByLines",
+      "kind": "function",
+      "group": "src/ingest/chunker.ts",
+      "layer": "Ingest",
+      "file": "src/ingest/chunker.ts",
+      "line": 146,
+      "exported": true,
+      "id": "chunkByLines"
+    },
+    {
+      "label": "scriptKind",
+      "kind": "function",
+      "group": "src/ingest/chunker.ts",
+      "layer": "Ingest",
+      "file": "src/ingest/chunker.ts",
+      "line": 176,
+      "exported": false,
+      "id": "scriptKind"
+    },
+    {
+      "label": "embeddingText",
+      "kind": "function",
+      "group": "src/ingest/chunker.ts",
+      "layer": "Ingest",
+      "file": "src/ingest/chunker.ts",
+      "line": 184,
+      "exported": true,
+      "id": "embeddingText"
+    },
+    {
+      "label": "walkRepo",
+      "kind": "function",
+      "group": "src/ingest/walker.ts",
+      "layer": "Ingest",
+      "file": "src/ingest/walker.ts",
+      "line": 11,
+      "exported": true,
+      "id": "walkRepo"
+    },
+    {
+      "label": "isIgnored",
+      "kind": "function",
+      "group": "src/ingest/walker.ts",
+      "layer": "Ingest",
+      "file": "src/ingest/walker.ts",
+      "line": 37,
+      "exported": false,
+      "id": "isIgnored"
+    },
+    {
+      "id": "LLM.constructor",
+      "label": "LLM.constructor",
+      "kind": "method",
+      "group": "LLM",
+      "layer": "Store & LLM",
+      "file": "src/llm/ollama.ts",
+      "line": 13,
+      "exported": true
+    },
+    {
+      "id": "LLM.embedDocuments",
+      "label": "LLM.embedDocuments",
+      "kind": "method",
+      "group": "LLM",
+      "layer": "Store & LLM",
+      "file": "src/llm/ollama.ts",
+      "line": 25,
+      "exported": true
+    },
+    {
+      "id": "LLM.embedQuery",
+      "label": "LLM.embedQuery",
+      "kind": "method",
+      "group": "LLM",
+      "layer": "Store & LLM",
+      "file": "src/llm/ollama.ts",
+      "line": 29,
+      "exported": true
+    },
+    {
+      "id": "LLM.prefix",
+      "label": "LLM.prefix",
+      "kind": "method",
+      "group": "LLM",
+      "layer": "Store & LLM",
+      "file": "src/llm/ollama.ts",
+      "line": 34,
+      "exported": true
+    },
+    {
+      "id": "LLM.embed",
+      "label": "LLM.embed",
+      "kind": "method",
+      "group": "LLM",
+      "layer": "Store & LLM",
+      "file": "src/llm/ollama.ts",
+      "line": 39,
+      "exported": true
+    },
+    {
+      "id": "LLM.chat",
+      "label": "LLM.chat",
+      "kind": "method",
+      "group": "LLM",
+      "layer": "Store & LLM",
+      "file": "src/llm/ollama.ts",
+      "line": 48,
+      "exported": true
+    },
+    {
+      "id": "LLM.listModels",
+      "label": "LLM.listModels",
+      "kind": "method",
+      "group": "LLM",
+      "layer": "Store & LLM",
+      "file": "src/llm/ollama.ts",
+      "line": 88,
+      "exported": true
+    },
+    {
+      "label": "parseInlineToolCalls",
+      "kind": "function",
+      "group": "src/llm/ollama.ts",
+      "layer": "Store & LLM",
+      "file": "src/llm/ollama.ts",
+      "line": 99,
+      "exported": true,
+      "id": "parseInlineToolCalls"
+    },
+    {
+      "label": "sqlString",
+      "kind": "function",
+      "group": "src/store/vectorStore.ts",
+      "layer": "Store & LLM",
+      "file": "src/store/vectorStore.ts",
+      "line": 72,
+      "exported": false,
+      "id": "sqlString"
+    },
+    {
+      "id": "VectorStore.constructor",
+      "label": "VectorStore.constructor",
+      "kind": "method",
+      "group": "VectorStore",
+      "layer": "Store & LLM",
+      "file": "src/store/vectorStore.ts",
+      "line": 24,
+      "exported": true
+    },
+    {
+      "id": "VectorStore.open",
+      "label": "VectorStore.open",
+      "kind": "method",
+      "group": "VectorStore",
+      "layer": "Store & LLM",
+      "file": "src/store/vectorStore.ts",
+      "line": 29,
+      "exported": true
+    },
+    {
+      "id": "VectorStore.add",
+      "label": "VectorStore.add",
+      "kind": "method",
+      "group": "VectorStore",
+      "layer": "Store & LLM",
+      "file": "src/store/vectorStore.ts",
+      "line": 36,
+      "exported": true
+    },
+    {
+      "id": "VectorStore.deleteByPaths",
+      "label": "VectorStore.deleteByPaths",
+      "kind": "method",
+      "group": "VectorStore",
+      "layer": "Store & LLM",
+      "file": "src/store/vectorStore.ts",
+      "line": 46,
+      "exported": true
+    },
+    {
+      "id": "VectorStore.reset",
+      "label": "VectorStore.reset",
+      "kind": "method",
+      "group": "VectorStore",
+      "layer": "Store & LLM",
+      "file": "src/store/vectorStore.ts",
+      "line": 54,
+      "exported": true
+    },
+    {
+      "id": "VectorStore.count",
+      "label": "VectorStore.count",
+      "kind": "method",
+      "group": "VectorStore",
+      "layer": "Store & LLM",
+      "file": "src/store/vectorStore.ts",
+      "line": 59,
+      "exported": true
+    },
+    {
+      "id": "VectorStore.search",
+      "label": "VectorStore.search",
+      "kind": "method",
+      "group": "VectorStore",
+      "layer": "Store & LLM",
+      "file": "src/store/vectorStore.ts",
+      "line": 63,
+      "exported": true
+    },
+    {
+      "label": "src/config.ts (module)",
+      "kind": "module",
+      "group": "src/config.ts",
+      "layer": "Utilities",
+      "file": "src/config.ts",
+      "line": 5,
+      "id": "src/config.ts (module)"
+    },
+    {
+      "label": "expandHome",
+      "kind": "function",
+      "group": "src/config.ts",
+      "layer": "Utilities",
+      "file": "src/config.ts",
+      "line": 11,
+      "exported": false,
+      "id": "expandHome"
+    },
+    {
+      "label": "num",
+      "kind": "function",
+      "group": "src/config.ts",
+      "layer": "Utilities",
+      "file": "src/config.ts",
+      "line": 15,
+      "exported": false,
+      "id": "num"
+    },
+    {
+      "label": "toPosix",
+      "kind": "function",
+      "group": "src/util/paths.ts",
+      "layer": "Utilities",
+      "file": "src/util/paths.ts",
+      "line": 3,
+      "exported": true,
+      "id": "toPosix"
+    },
+    {
+      "label": "resolveInRepo",
+      "kind": "function",
+      "group": "src/util/paths.ts",
+      "layer": "Utilities",
+      "file": "src/util/paths.ts",
+      "line": 11,
+      "exported": true,
+      "id": "resolveInRepo"
+    },
+    {
+      "id": "@lancedb/lancedb",
+      "label": "@lancedb/lancedb",
+      "kind": "external",
+      "group": "libraries",
+      "layer": "External"
+    },
+    {
+      "id": "commander",
+      "label": "commander",
+      "kind": "external",
+      "group": "libraries",
+      "layer": "External"
+    },
+    {
+      "id": "diff",
+      "label": "diff",
+      "kind": "external",
+      "group": "libraries",
+      "layer": "External"
+    },
+    {
+      "id": "ignore",
+      "label": "ignore",
+      "kind": "external",
+      "group": "libraries",
+      "layer": "External"
+    },
+    {
+      "id": "ollama",
+      "label": "ollama",
+      "kind": "external",
+      "group": "libraries",
+      "layer": "External"
+    },
+    {
+      "id": "picocolors",
+      "label": "picocolors",
+      "kind": "external",
+      "group": "libraries",
+      "layer": "External"
+    },
+    {
+      "id": "typescript",
+      "label": "typescript",
+      "kind": "external",
+      "group": "libraries",
+      "layer": "External"
+    },
+    {
+      "id": "node:crypto",
+      "label": "node:crypto",
+      "kind": "external",
+      "group": "node built-ins",
+      "layer": "External"
+    },
+    {
+      "id": "node:fs",
+      "label": "node:fs",
+      "kind": "external",
+      "group": "node built-ins",
+      "layer": "External"
+    },
+    {
+      "id": "node:os",
+      "label": "node:os",
+      "kind": "external",
+      "group": "node built-ins",
+      "layer": "External"
+    },
+    {
+      "id": "node:path",
+      "label": "node:path",
+      "kind": "external",
+      "group": "node built-ins",
+      "layer": "External"
+    },
+    {
+      "id": "node:process",
+      "label": "node:process",
+      "kind": "external",
+      "group": "node built-ins",
+      "layer": "External"
+    },
+    {
+      "id": "node:readline",
+      "label": "node:readline",
+      "kind": "external",
+      "group": "node built-ins",
+      "layer": "External"
+    }
+  ],
+  "edges": [
+    {
+      "from": "Agent.constructor",
+      "to": "LLM.constructor",
+      "count": 1,
+      "lines": [
+        31
+      ]
+    },
+    {
+      "from": "Agent.constructor",
+      "to": "node:path",
+      "count": 1,
+      "lines": [
+        36
+      ]
+    },
+    {
+      "from": "Agent.constructor",
+      "to": "Retriever.constructor",
+      "count": 1,
+      "lines": [
+        34
+      ]
+    },
+    {
+      "from": "Agent.constructor",
+      "to": "systemPrompt",
+      "count": 1,
+      "lines": [
+        36
+      ]
+    },
+    {
+      "from": "Agent.run",
+      "to": "Agent.trimmedHistory",
+      "count": 1,
+      "lines": [
+        53
+      ]
+    },
+    {
+      "from": "Agent.run",
+      "to": "grep",
+      "count": 1,
+      "lines": [
+        63
+      ],
+      "dynamic": true
+    },
+    {
+      "from": "Agent.run",
+      "to": "list_files",
+      "count": 1,
+      "lines": [
+        63
+      ],
+      "dynamic": true
+    },
+    {
+      "from": "Agent.run",
+      "to": "LLM.chat",
+      "count": 1,
+      "lines": [
+        53
+      ]
+    },
+    {
+      "from": "Agent.run",
+      "to": "propose_edit",
+      "count": 1,
+      "lines": [
+        63
+      ],
+      "dynamic": true
+    },
+    {
+      "from": "Agent.run",
+      "to": "read_file",
+      "count": 1,
+      "lines": [
+        63
+      ],
+      "dynamic": true
+    },
+    {
+      "from": "Agent.run",
+      "to": "Retriever.format",
+      "count": 1,
+      "lines": [
+        45
+      ]
+    },
+    {
+      "from": "Agent.run",
+      "to": "Retriever.retrieve",
+      "count": 1,
+      "lines": [
+        44
+      ]
+    },
+    {
+      "from": "Agent.run",
+      "to": "search_code",
+      "count": 1,
+      "lines": [
+        63
+      ],
+      "dynamic": true
+    },
+    {
+      "from": "Agent.run",
+      "to": "withRetrievedContext",
+      "count": 1,
+      "lines": [
+        45
+      ]
+    },
+    {
+      "from": "chunkByLines",
+      "to": "languageFor",
+      "count": 1,
+      "lines": [
+        153
+      ]
+    },
+    {
+      "from": "chunkFile",
+      "to": "chunkByLines",
+      "count": 1,
+      "lines": [
+        34
+      ]
+    },
+    {
+      "from": "chunkFile",
+      "to": "chunkTypeScript",
+      "count": 1,
+      "lines": [
+        29
+      ]
+    },
+    {
+      "from": "chunkTypeScript",
+      "to": "describe",
+      "count": 1,
+      "lines": [
+        77
+      ]
+    },
+    {
+      "from": "chunkTypeScript",
+      "to": "languageFor",
+      "count": 1,
+      "lines": [
+        44
+      ]
+    },
+    {
+      "from": "chunkTypeScript",
+      "to": "scriptKind",
+      "count": 1,
+      "lines": [
+        43
+      ]
+    },
+    {
+      "from": "chunkTypeScript",
+      "to": "splitIfLarge",
+      "count": 3,
+      "lines": [
+        72,
+        92,
+        107
+      ]
+    },
+    {
+      "from": "chunkTypeScript",
+      "to": "typescript",
+      "count": 15,
+      "lines": [
+        43,
+        48,
+        51,
+        52,
+        54,
+        70,
+        80,
+        87,
+        89,
+        103,
+        104,
+        105,
+        109
+      ]
+    },
+    {
+      "from": "cli ask",
+      "to": "makeAgent",
+      "count": 1,
+      "lines": [
+        73
+      ]
+    },
+    {
+      "from": "cli ask",
+      "to": "node:readline",
+      "count": 2,
+      "lines": [
+        72,
+        74
+      ]
+    },
+    {
+      "from": "cli ask",
+      "to": "RepoIndex.open",
+      "count": 1,
+      "lines": [
+        70
+      ]
+    },
+    {
+      "from": "cli ask",
+      "to": "runTurn",
+      "count": 1,
+      "lines": [
+        73
+      ]
+    },
+    {
+      "from": "cli ask",
+      "to": "syncWithProgress",
+      "count": 1,
+      "lines": [
+        71
+      ]
+    },
+    {
+      "from": "cli chat",
+      "to": "Agent.reset",
+      "count": 1,
+      "lines": [
+        51
+      ]
+    },
+    {
+      "from": "cli chat",
+      "to": "makeAgent",
+      "count": 1,
+      "lines": [
+        36
+      ]
+    },
+    {
+      "from": "cli chat",
+      "to": "node:path",
+      "count": 1,
+      "lines": [
+        38
+      ]
+    },
+    {
+      "from": "cli chat",
+      "to": "node:readline",
+      "count": 3,
+      "lines": [
+        35,
+        44,
+        61
+      ]
+    },
+    {
+      "from": "cli chat",
+      "to": "picocolors",
+      "count": 4,
+      "lines": [
+        38,
+        39,
+        44,
+        52
+      ]
+    },
+    {
+      "from": "cli chat",
+      "to": "RepoIndex.open",
+      "count": 1,
+      "lines": [
+        32
+      ]
+    },
+    {
+      "from": "cli chat",
+      "to": "runTurn",
+      "count": 1,
+      "lines": [
+        59
+      ]
+    },
+    {
+      "from": "cli chat",
+      "to": "syncWithProgress",
+      "count": 2,
+      "lines": [
+        33,
+        56
+      ]
+    },
+    {
+      "from": "cli doctor",
+      "to": "LLM.constructor",
+      "count": 1,
+      "lines": [
+        81
+      ]
+    },
+    {
+      "from": "cli doctor",
+      "to": "LLM.listModels",
+      "count": 1,
+      "lines": [
+        85
+      ]
+    },
+    {
+      "from": "cli doctor",
+      "to": "picocolors",
+      "count": 3,
+      "lines": [
+        87,
+        93
+      ]
+    },
+    {
+      "from": "cli index",
+      "to": "picocolors",
+      "count": 1,
+      "lines": [
+        23
+      ]
+    },
+    {
+      "from": "cli index",
+      "to": "RepoIndex.open",
+      "count": 1,
+      "lines": [
+        21
+      ]
+    },
+    {
+      "from": "cli index",
+      "to": "syncWithProgress",
+      "count": 1,
+      "lines": [
+        22
+      ]
+    },
+    {
+      "from": "colorize",
+      "to": "picocolors",
+      "count": 3,
+      "lines": [
+        61,
+        62,
+        63
+      ]
+    },
+    {
+      "from": "describe",
+      "to": "typescript",
+      "count": 17,
+      "lines": [
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        126,
+        127,
+        128,
+        129,
+        130,
+        133,
+        134,
+        136
+      ]
+    },
+    {
+      "from": "expandHome",
+      "to": "node:os",
+      "count": 1,
+      "lines": [
+        12
+      ]
+    },
+    {
+      "from": "expandHome",
+      "to": "node:path",
+      "count": 1,
+      "lines": [
+        12
+      ]
+    },
+    {
+      "from": "grep",
+      "to": "defineTool",
+      "count": 1,
+      "lines": [
+        48
+      ]
+    },
+    {
+      "from": "grep",
+      "to": "node:fs",
+      "count": 1,
+      "lines": [
+        68
+      ]
+    },
+    {
+      "from": "grep",
+      "to": "resolveInRepo",
+      "count": 1,
+      "lines": [
+        68
+      ]
+    },
+    {
+      "from": "grep",
+      "to": "str",
+      "count": 2,
+      "lines": [
+        60,
+        64
+      ]
+    },
+    {
+      "from": "grep",
+      "to": "walkRepo",
+      "count": 1,
+      "lines": [
+        66
+      ]
+    },
+    {
+      "from": "int",
+      "to": "str",
+      "count": 1,
+      "lines": [
+        36
+      ]
+    },
+    {
+      "from": "isIgnored",
+      "to": "ignore",
+      "count": 1,
+      "lines": [
+        41
+      ]
+    },
+    {
+      "from": "list_files",
+      "to": "defineTool",
+      "count": 1,
+      "lines": [
+        31
+      ]
+    },
+    {
+      "from": "list_files",
+      "to": "str",
+      "count": 2,
+      "lines": [
+        40,
+        41
+      ]
+    },
+    {
+      "from": "list_files",
+      "to": "walkRepo",
+      "count": 1,
+      "lines": [
+        42
+      ]
+    },
+    {
+      "from": "LLM.chat",
+      "to": "ollama",
+      "count": 1,
+      "lines": [
+        52
+      ]
+    },
+    {
+      "from": "LLM.chat",
+      "to": "parseInlineToolCalls",
+      "count": 1,
+      "lines": [
+        80
+      ]
+    },
+    {
+      "from": "LLM.constructor",
+      "to": "ollama",
+      "count": 1,
+      "lines": [
+        18
+      ]
+    },
+    {
+      "from": "LLM.embed",
+      "to": "ollama",
+      "count": 1,
+      "lines": [
+        40
+      ]
+    },
+    {
+      "from": "LLM.embedDocuments",
+      "to": "LLM.embed",
+      "count": 1,
+      "lines": [
+        26
+      ]
+    },
+    {
+      "from": "LLM.embedDocuments",
+      "to": "LLM.prefix",
+      "count": 1,
+      "lines": [
+        26
+      ]
+    },
+    {
+      "from": "LLM.embedQuery",
+      "to": "LLM.embed",
+      "count": 1,
+      "lines": [
+        30
+      ]
+    },
+    {
+      "from": "LLM.embedQuery",
+      "to": "LLM.prefix",
+      "count": 1,
+      "lines": [
+        30
+      ]
+    },
+    {
+      "from": "LLM.listModels",
+      "to": "ollama",
+      "count": 1,
+      "lines": [
+        89
+      ]
+    },
+    {
+      "from": "makeAgent",
+      "to": "Agent.constructor",
+      "count": 1,
+      "lines": [
+        100
+      ]
+    },
+    {
+      "from": "makeAgent",
+      "to": "node:readline",
+      "count": 1,
+      "lines": [
+        102
+      ]
+    },
+    {
+      "from": "makeAgent",
+      "to": "picocolors",
+      "count": 1,
+      "lines": [
+        102
+      ]
+    },
+    {
+      "from": "propose_edit",
+      "to": "colorize",
+      "count": 1,
+      "lines": [
+        44
+      ]
+    },
+    {
+      "from": "propose_edit",
+      "to": "defineTool",
+      "count": 1,
+      "lines": [
+        8
+      ]
+    },
+    {
+      "from": "propose_edit",
+      "to": "diff",
+      "count": 1,
+      "lines": [
+        42
+      ]
+    },
+    {
+      "from": "propose_edit",
+      "to": "node:fs",
+      "count": 3,
+      "lines": [
+        24,
+        49,
+        50
+      ]
+    },
+    {
+      "from": "propose_edit",
+      "to": "node:path",
+      "count": 1,
+      "lines": [
+        49
+      ]
+    },
+    {
+      "from": "propose_edit",
+      "to": "picocolors",
+      "count": 2,
+      "lines": [
+        43
+      ]
+    },
+    {
+      "from": "propose_edit",
+      "to": "RepoIndex.updateFiles",
+      "count": 1,
+      "lines": [
+        51
+      ]
+    },
+    {
+      "from": "propose_edit",
+      "to": "resolveInRepo",
+      "count": 1,
+      "lines": [
+        21
+      ]
+    },
+    {
+      "from": "propose_edit",
+      "to": "str",
+      "count": 4,
+      "lines": [
+        21,
+        22,
+        23,
+        43
+      ]
+    },
+    {
+      "from": "read_file",
+      "to": "defineTool",
+      "count": 1,
+      "lines": [
+        8
+      ]
+    },
+    {
+      "from": "read_file",
+      "to": "int",
+      "count": 2,
+      "lines": [
+        20,
+        21
+      ]
+    },
+    {
+      "from": "read_file",
+      "to": "node:fs",
+      "count": 1,
+      "lines": [
+        19
+      ]
+    },
+    {
+      "from": "read_file",
+      "to": "resolveInRepo",
+      "count": 1,
+      "lines": [
+        18
+      ]
+    },
+    {
+      "from": "read_file",
+      "to": "str",
+      "count": 1,
+      "lines": [
+        18
+      ]
+    },
+    {
+      "from": "RepoIndex.chunkCount",
+      "to": "VectorStore.count",
+      "count": 1,
+      "lines": [
+        112
+      ]
+    },
+    {
+      "from": "RepoIndex.embedAndStore",
+      "to": "chunkFile",
+      "count": 1,
+      "lines": [
+        116
+      ]
+    },
+    {
+      "from": "RepoIndex.embedAndStore",
+      "to": "embeddingText",
+      "count": 1,
+      "lines": [
+        120
+      ]
+    },
+    {
+      "from": "RepoIndex.embedAndStore",
+      "to": "LLM.embedDocuments",
+      "count": 1,
+      "lines": [
+        120
+      ]
+    },
+    {
+      "from": "RepoIndex.embedAndStore",
+      "to": "VectorStore.add",
+      "count": 1,
+      "lines": [
+        132
+      ]
+    },
+    {
+      "from": "RepoIndex.open",
+      "to": "LLM.constructor",
+      "count": 1,
+      "lines": [
+        37
+      ]
+    },
+    {
+      "from": "RepoIndex.open",
+      "to": "node:crypto",
+      "count": 3,
+      "lines": [
+        39
+      ]
+    },
+    {
+      "from": "RepoIndex.open",
+      "to": "node:fs",
+      "count": 2,
+      "lines": [
+        41,
+        43
+      ]
+    },
+    {
+      "from": "RepoIndex.open",
+      "to": "node:path",
+      "count": 5,
+      "lines": [
+        38,
+        40,
+        44,
+        48
+      ]
+    },
+    {
+      "from": "RepoIndex.open",
+      "to": "RepoIndex.constructor",
+      "count": 1,
+      "lines": [
+        49
+      ]
+    },
+    {
+      "from": "RepoIndex.open",
+      "to": "VectorStore.open",
+      "count": 1,
+      "lines": [
+        48
+      ]
+    },
+    {
+      "from": "RepoIndex.open",
+      "to": "VectorStore.reset",
+      "count": 1,
+      "lines": [
+        53
+      ]
+    },
+    {
+      "from": "RepoIndex.saveManifest",
+      "to": "node:fs",
+      "count": 1,
+      "lines": [
+        139
+      ]
+    },
+    {
+      "from": "RepoIndex.saveManifest",
+      "to": "node:path",
+      "count": 1,
+      "lines": [
+        139
+      ]
+    },
+    {
+      "from": "RepoIndex.search",
+      "to": "LLM.embedQuery",
+      "count": 1,
+      "lines": [
+        107
+      ]
+    },
+    {
+      "from": "RepoIndex.search",
+      "to": "VectorStore.search",
+      "count": 1,
+      "lines": [
+        108
+      ]
+    },
+    {
+      "from": "RepoIndex.sync",
+      "to": "node:fs",
+      "count": 2,
+      "lines": [
+        72,
+        74
+      ]
+    },
+    {
+      "from": "RepoIndex.sync",
+      "to": "node:path",
+      "count": 1,
+      "lines": [
+        71
+      ]
+    },
+    {
+      "from": "RepoIndex.sync",
+      "to": "RepoIndex.embedAndStore",
+      "count": 1,
+      "lines": [
+        83
+      ]
+    },
+    {
+      "from": "RepoIndex.sync",
+      "to": "RepoIndex.saveManifest",
+      "count": 1,
+      "lines": [
+        85
+      ]
+    },
+    {
+      "from": "RepoIndex.sync",
+      "to": "sha1",
+      "count": 1,
+      "lines": [
+        75
+      ]
+    },
+    {
+      "from": "RepoIndex.sync",
+      "to": "VectorStore.deleteByPaths",
+      "count": 1,
+      "lines": [
+        80
+      ]
+    },
+    {
+      "from": "RepoIndex.sync",
+      "to": "VectorStore.reset",
+      "count": 1,
+      "lines": [
+        62
+      ]
+    },
+    {
+      "from": "RepoIndex.sync",
+      "to": "walkRepo",
+      "count": 1,
+      "lines": [
+        65
+      ]
+    },
+    {
+      "from": "RepoIndex.updateFiles",
+      "to": "node:fs",
+      "count": 1,
+      "lines": [
+        95
+      ]
+    },
+    {
+      "from": "RepoIndex.updateFiles",
+      "to": "node:path",
+      "count": 1,
+      "lines": [
+        95
+      ]
+    },
+    {
+      "from": "RepoIndex.updateFiles",
+      "to": "RepoIndex.embedAndStore",
+      "count": 1,
+      "lines": [
+        100
+      ]
+    },
+    {
+      "from": "RepoIndex.updateFiles",
+      "to": "RepoIndex.saveManifest",
+      "count": 1,
+      "lines": [
+        103
+      ]
+    },
+    {
+      "from": "RepoIndex.updateFiles",
+      "to": "sha1",
+      "count": 1,
+      "lines": [
+        97
+      ]
+    },
+    {
+      "from": "RepoIndex.updateFiles",
+      "to": "VectorStore.deleteByPaths",
+      "count": 1,
+      "lines": [
+        99
+      ]
+    },
+    {
+      "from": "resolveInRepo",
+      "to": "node:path",
+      "count": 3,
+      "lines": [
+        12,
+        13,
+        14
+      ]
+    },
+    {
+      "from": "resolveInRepo",
+      "to": "toPosix",
+      "count": 1,
+      "lines": [
+        17
+      ]
+    },
+    {
+      "from": "Retriever.retrieve",
+      "to": "RepoIndex.search",
+      "count": 1,
+      "lines": [
+        12
+      ]
+    },
+    {
+      "from": "runTurn",
+      "to": "Agent.run",
+      "count": 1,
+      "lines": [
+        109
+      ]
+    },
+    {
+      "from": "runTurn",
+      "to": "node:process",
+      "count": 4,
+      "lines": [
+        111,
+        113,
+        116,
+        122
+      ]
+    },
+    {
+      "from": "runTurn",
+      "to": "picocolors",
+      "count": 3,
+      "lines": [
+        111,
+        119,
+        124
+      ]
+    },
+    {
+      "from": "search_code",
+      "to": "defineTool",
+      "count": 1,
+      "lines": [
+        4
+      ]
+    },
+    {
+      "from": "search_code",
+      "to": "int",
+      "count": 1,
+      "lines": [
+        16
+      ]
+    },
+    {
+      "from": "search_code",
+      "to": "Retriever.format",
+      "count": 1,
+      "lines": [
+        20
+      ]
+    },
+    {
+      "from": "search_code",
+      "to": "Retriever.retrieve",
+      "count": 1,
+      "lines": [
+        15
+      ]
+    },
+    {
+      "from": "search_code",
+      "to": "str",
+      "count": 2,
+      "lines": [
+        15,
+        17
+      ]
+    },
+    {
+      "from": "sha1",
+      "to": "node:crypto",
+      "count": 3,
+      "lines": [
+        144
+      ]
+    },
+    {
+      "from": "splitIfLarge",
+      "to": "chunkByLines",
+      "count": 1,
+      "lines": [
+        142
+      ]
+    },
+    {
+      "from": "src/cli.ts (module)",
+      "to": "commander",
+      "count": 22,
+      "lines": [
+        11,
+        15,
+        26,
+        64,
+        77,
+        140
+      ]
+    },
+    {
+      "from": "src/cli.ts (module)",
+      "to": "node:process",
+      "count": 1,
+      "lines": [
+        142
+      ]
+    },
+    {
+      "from": "src/cli.ts (module)",
+      "to": "picocolors",
+      "count": 1,
+      "lines": [
+        141
+      ]
+    },
+    {
+      "from": "src/config.ts (module)",
+      "to": "expandHome",
+      "count": 1,
+      "lines": [
+        27
+      ]
+    },
+    {
+      "from": "src/config.ts (module)",
+      "to": "node:process",
+      "count": 1,
+      "lines": [
+        6
+      ]
+    },
+    {
+      "from": "src/config.ts (module)",
+      "to": "num",
+      "count": 4,
+      "lines": [
+        25,
+        26,
+        28,
+        29
+      ]
+    },
+    {
+      "from": "syncWithProgress",
+      "to": "node:process",
+      "count": 2,
+      "lines": [
+        130,
+        131
+      ]
+    },
+    {
+      "from": "syncWithProgress",
+      "to": "picocolors",
+      "count": 2,
+      "lines": [
+        130,
+        133
+      ]
+    },
+    {
+      "from": "syncWithProgress",
+      "to": "RepoIndex.sync",
+      "count": 1,
+      "lines": [
+        130
+      ]
+    },
+    {
+      "from": "VectorStore.add",
+      "to": "@lancedb/lancedb",
+      "count": 2,
+      "lines": [
+        40,
+        42
+      ]
+    },
+    {
+      "from": "VectorStore.count",
+      "to": "@lancedb/lancedb",
+      "count": 1,
+      "lines": [
+        60
+      ]
+    },
+    {
+      "from": "VectorStore.deleteByPaths",
+      "to": "@lancedb/lancedb",
+      "count": 1,
+      "lines": [
+        50
+      ]
+    },
+    {
+      "from": "VectorStore.deleteByPaths",
+      "to": "sqlString",
+      "count": 1,
+      "lines": [
+        49
+      ]
+    },
+    {
+      "from": "VectorStore.open",
+      "to": "@lancedb/lancedb",
+      "count": 3,
+      "lines": [
+        30,
+        31,
+        32
+      ]
+    },
+    {
+      "from": "VectorStore.open",
+      "to": "VectorStore.constructor",
+      "count": 1,
+      "lines": [
+        33
+      ]
+    },
+    {
+      "from": "VectorStore.reset",
+      "to": "@lancedb/lancedb",
+      "count": 1,
+      "lines": [
+        55
+      ]
+    },
+    {
+      "from": "VectorStore.search",
+      "to": "@lancedb/lancedb",
+      "count": 5,
+      "lines": [
+        65,
+        66,
+        67
+      ]
+    },
+    {
+      "from": "VectorStore.search",
+      "to": "sqlString",
+      "count": 1,
+      "lines": [
+        66
+      ]
+    },
+    {
+      "from": "walkRepo",
+      "to": "ignore",
+      "count": 4,
+      "lines": [
+        13,
+        20
+      ]
+    },
+    {
+      "from": "walkRepo",
+      "to": "isIgnored",
+      "count": 1,
+      "lines": [
+        26
+      ]
+    },
+    {
+      "from": "walkRepo",
+      "to": "node:fs",
+      "count": 4,
+      "lines": [
+        19,
+        22,
+        25,
+        30
+      ]
+    },
+    {
+      "from": "walkRepo",
+      "to": "node:path",
+      "count": 2,
+      "lines": [
+        19,
+        29
+      ]
+    },
+    {
+      "from": "walkRepo",
+      "to": "toPosix",
+      "count": 1,
+      "lines": [
+        31
+      ]
+    }
+  ],
+  "limitations": [
+    "Nested helper functions (e.g. `walk` inside `walkRepo`, `chunkClass` inside `chunkTypeScript`) are folded into their enclosing node.",
+    "Calls into the JavaScript/DOM standard library (Array, JSON, Promise, console, …) are omitted.",
+    "Calls into Node built-ins are grouped by module (e.g. `fs.readFile` → node:fs, `process.stdout.write` → node:process).",
+    "Callback `AgentEvents.onToolCall` is called through an interface and is not resolved to an implementation.",
+    "Callback `AgentEvents.onToolResult` is called through an interface and is not resolved to an implementation.",
+    "Callback `ToolContext.confirm` is called through an interface and is not resolved to an implementation.",
+    "Callback `ToolContext.print` is called through an interface and is not resolved to an implementation."
+  ]
+}

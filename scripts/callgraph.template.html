@@ -1,0 +1,515 @@
+<title>oca Call Graph</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one-screen tool. Header bar; a pannable call-graph canvas whose columns are architecture
+   layers (CLI → … → libraries); a detail panel on the right (stacked below on phones). */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --group: #e8ecf1;
+  --fg: #17202b;
+  --muted: #5a6474;
+  --line: #c9d0da;
+  --edge: #8590a0;
+  --out: #2257c2;      /* "calls" */
+  --in: #b0346c;       /* "called by" */
+  --tool: #f5e8cc;
+  --cli: #d8eedf;
+  --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-code: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10141a; --surface: #19202a; --group: #1e2530; --fg: #e3e8ef; --muted: #96a0b0;
+    --line: #333c4a; --edge: #6d7788; --out: #7ea6ff; --in: #ee80b3; --tool: #3b3322; --cli: #1e3627;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10141a; --surface: #19202a; --group: #1e2530; --fg: #e3e8ef; --muted: #96a0b0;
+  --line: #333c4a; --edge: #6d7788; --out: #7ea6ff; --in: #ee80b3; --tool: #3b3322; --cli: #1e3627;
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.45 var(--font-ui); }
+[hidden] { display: none !important; }
+.code { font-family: var(--font-code); }
+
+.app { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+
+header {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px;
+  padding-block: 12px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--surface); border-bottom: 1px solid var(--line);
+}
+.title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+h1 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance; }
+.stats { margin: 0; color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.search { position: relative; }
+.search input {
+  width: 220px; max-width: 60vw; padding: 7px 10px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg);
+  font: 13px var(--font-code);
+}
+.toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.toggle input { accent-color: var(--out); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+main { display: grid; grid-template-columns: minmax(0, 1fr) 330px; min-height: 0; }
+
+.canvas { position: relative; min-width: 0; min-height: 0; overflow: hidden; touch-action: none; cursor: grab; }
+.canvas.dragging { cursor: grabbing; }
+#graph { display: block; width: 100%; height: 100%; user-select: none; }
+.zoom {
+  position: absolute; left: calc(12px + env(safe-area-inset-left, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  display: flex; gap: 6px;
+}
+button { font: inherit; color: inherit; }
+.zoom button, .btn {
+  min-width: 34px; height: 32px; padding: 0 10px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg); font-size: 13px;
+}
+.zoom button:hover, .btn:hover { border-color: var(--muted); }
+:focus-visible { outline: 2px solid var(--out); outline-offset: 2px; }
+#empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); padding: 24px; text-align: center; }
+
+/* ---------- SVG ---------- */
+.col-title { fill: var(--muted); font: 600 10.5px var(--font-ui); letter-spacing: 0.09em; text-transform: uppercase; }
+.grp rect { fill: var(--group); stroke: none; }
+.grp text { fill: var(--muted); font: 500 11px var(--font-code); }
+.grp .kw { fill: var(--muted); font-weight: 400; opacity: 0.8; }
+.grp .nm { fill: var(--fg); font-weight: 600; }
+
+.edge { fill: none; stroke: var(--edge); stroke-opacity: 0.32; stroke-width: 1.1; }
+.edge.dyn { stroke-dasharray: 4 3; }
+.edge.out { stroke: var(--out); stroke-opacity: 0.95; stroke-width: 1.9; }
+.edge.in { stroke: var(--in); stroke-opacity: 0.95; stroke-width: 1.9; }
+.has-focus .edge:not(.out):not(.in) { stroke-opacity: 0.05; }
+#m-base path { fill: var(--edge); fill-opacity: 0.6; }
+#m-out path { fill: var(--out); }
+#m-in path { fill: var(--in); }
+
+.node { cursor: pointer; outline: none; }
+.node rect { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.node text { fill: var(--fg); font: 500 12px var(--font-code); pointer-events: none; }
+.k-tool rect { fill: var(--tool); }
+.k-cli rect { fill: var(--cli); }
+.k-external rect { stroke-dasharray: 3 2; stroke: var(--muted); }
+.k-module text { font-style: italic; fill: var(--muted); }
+.node:hover rect { stroke: var(--muted); }
+.node:focus-visible rect { stroke: var(--out); stroke-width: 2.5; }
+.has-focus .node:not(.sel):not(.callee):not(.caller) { opacity: 0.28; }
+.has-focus .grp { opacity: 0.55; }
+.node.sel rect { stroke: var(--fg); stroke-width: 2; }
+.node.callee rect { stroke: var(--out); stroke-width: 1.6; }
+.node.caller rect { stroke: var(--in); stroke-width: 1.6; }
+.searching .node:not(.match) { opacity: 0.18; }
+.searching .edge { stroke-opacity: 0.05; }
+.node.match rect { stroke: var(--out); stroke-width: 2; }
+@media (prefers-reduced-motion: no-preference) {
+  .node, .edge, .grp { transition: opacity 120ms ease, stroke-opacity 120ms ease; }
+}
+
+/* ---------- Panel ---------- */
+aside {
+  display: flex; flex-direction: column; gap: 20px; min-width: 0; overflow: auto;
+  background: var(--surface); border-left: 1px solid var(--line);
+  padding-block: 18px calc(18px + env(safe-area-inset-bottom, 0px));
+  padding-left: 18px; padding-right: max(18px, env(safe-area-inset-right, 0px));
+}
+#panel { display: flex; flex-direction: column; gap: 14px; }
+.eyebrow { margin: 0; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+#panel h2 { margin: 0; font-size: 18px; line-height: 1.25; font-weight: 600; overflow-wrap: anywhere; text-wrap: balance; }
+#panel h2.code { font-size: 16px; }
+#panel p { margin: 0; max-width: 60ch; }
+.loc { color: var(--muted); font-size: 12.5px; user-select: all; overflow-wrap: anywhere; }
+.section { display: flex; flex-direction: column; gap: 6px; }
+.section h3 { margin: 0; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.count { color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.refs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.ref {
+  width: 100%; display: grid; grid-template-columns: 10px minmax(0, 1fr); column-gap: 8px; align-items: baseline;
+  padding: 5px 6px; border: 0; border-radius: 5px; background: none; text-align: left; cursor: pointer;
+}
+.ref:hover { background: var(--group); }
+.ref .sw { width: 10px; height: 3px; border-radius: 2px; align-self: center; }
+.sw.out { background: var(--out); }
+.sw.in { background: var(--in); }
+.ref .nm { font: 500 12.5px var(--font-code); overflow-wrap: anywhere; }
+.ref .meta { grid-column: 2; color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.none { color: var(--muted); font-size: 12.5px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg);
+  font: 500 12px var(--font-code); cursor: pointer;
+}
+.chip:hover { border-color: var(--out); }
+.panel-actions { display: flex; gap: 8px; }
+
+#legend { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); display: grid; gap: 7px; font-size: 12px; color: var(--muted); }
+#legend .row { display: flex; align-items: center; gap: 8px; }
+#legend svg { flex: none; }
+.lg-line { stroke-width: 2; }
+.lg-out { stroke: var(--out); }
+.lg-in { stroke: var(--in); }
+.lg-dyn { stroke: var(--edge); stroke-dasharray: 4 3; }
+.lg-box { stroke: var(--line); fill: var(--surface); }
+.lg-tool { fill: var(--tool); }
+.lg-cli { fill: var(--cli); }
+.lg-ext { stroke: var(--muted); stroke-dasharray: 3 2; }
+
+@media (max-width: 760px) {
+  html, body, .app { height: auto; }
+  main { grid-template-columns: minmax(0, 1fr); }
+  .canvas { height: 56vh; border-bottom: 1px solid var(--line); }
+  aside { border-left: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .search input { width: 170px; }
+}
+</style>
+
+<div class="app">
+  <header>
+    <div class="title">
+      <h1>oca call graph</h1>
+      <p class="stats" id="stats">Loading…</p>
+    </div>
+    <div class="controls">
+      <div class="search">
+        <label class="sr" for="q">Find a function or method</label>
+        <input id="q" type="search" placeholder="Find function…" autocomplete="off" spellcheck="false">
+      </div>
+      <label class="toggle" for="ext"><input id="ext" type="checkbox" checked> Show libraries</label>
+    </div>
+  </header>
+  <main>
+    <div class="canvas" id="canvas">
+      <svg id="graph" role="img" aria-label="Call graph of the oca source: functions and methods grouped by class or file, arranged in columns from the CLI to external libraries, with an arrow for each call.">
+        <defs>
+          <marker id="m-base" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 z"/></marker>
+          <marker id="m-out" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 z"/></marker>
+          <marker id="m-in" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 z"/></marker>
+        </defs>
+        <g id="world"><g id="groups"></g><g id="edges"></g><g id="nodes"></g></g>
+      </svg>
+      <div id="empty" hidden>No graph data embedded. Run <span class="code">npm run callgraph</span> to generate this page.</div>
+      <div class="zoom">
+        <button type="button" id="zin" aria-label="Zoom in">+</button>
+        <button type="button" id="zout" aria-label="Zoom out">−</button>
+        <button type="button" id="zfit">Fit</button>
+      </div>
+    </div>
+    <aside>
+      <div id="panel" aria-live="polite"></div>
+      <div id="legend">
+        <div class="row"><svg width="26" height="8" aria-hidden="true"><line class="lg-line lg-out" x1="1" y1="4" x2="25" y2="4"/></svg>Calls (outgoing from the selection)</div>
+        <div class="row"><svg width="26" height="8" aria-hidden="true"><line class="lg-line lg-in" x1="1" y1="4" x2="25" y2="4"/></svg>Called by (incoming to the selection)</div>
+        <div class="row"><svg width="26" height="8" aria-hidden="true"><line class="lg-line lg-dyn" x1="1" y1="4" x2="25" y2="4"/></svg>Through an interface (agent → tool.run)</div>
+        <div class="row"><svg width="26" height="14" aria-hidden="true"><rect class="lg-box lg-tool" x="1" y="1" width="24" height="12" rx="3"/></svg>Agent tool</div>
+        <div class="row"><svg width="26" height="14" aria-hidden="true"><rect class="lg-box lg-cli" x="1" y="1" width="24" height="12" rx="3"/></svg>CLI command</div>
+        <div class="row"><svg width="26" height="14" aria-hidden="true"><rect class="lg-box lg-ext" x="1" y="1" width="24" height="12" rx="3"/></svg>Library or Node built-in</div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<script>
+(() => {
+  const GRAPH = /*__GRAPH_DATA__*/ null;
+
+  const $ = (s) => document.querySelector(s);
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = $("#graph"), world = $("#world"), gLayer = $("#groups"), eLayer = $("#edges"), nLayer = $("#nodes");
+  const canvas = $("#canvas"), panel = $("#panel");
+
+  if (!GRAPH) { $("#empty").hidden = false; $("#stats").textContent = ""; return; }
+
+  // ---------- data ----------
+  const byId = new Map(GRAPH.nodes.map((n) => [n.id, n]));
+  const outE = new Map(), inE = new Map();
+  for (const e of GRAPH.edges) {
+    if (!outE.has(e.from)) outE.set(e.from, []);
+    if (!inE.has(e.to)) inE.set(e.to, []);
+    outE.get(e.from).push(e);
+    inE.get(e.to).push(e);
+  }
+  const key = (e) => e.from + "\u0000" + e.to;
+  const isClassGroup = (g) => GRAPH.nodes.some((n) => n.group === g && n.kind === "method");
+  const shortLabel = (n) => (n.kind === "method" && n.label.startsWith(n.group + ".") ? n.label.slice(n.group.length + 1) : n.label);
+  const groupTitle = (g) => (isClassGroup(g) ? "class " + g : g.startsWith("src/") ? g.slice(4) : g);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const KIND = { function: "Function", method: "Method", tool: "Agent tool", cli: "CLI command", module: "Module code", external: "External" };
+
+  const project = GRAPH.nodes.filter((n) => n.kind !== "external").length;
+  const ext = GRAPH.nodes.length - project;
+  $("#stats").textContent =
+    `${project} functions & methods · ${ext} libraries & Node modules · ${GRAPH.edges.length} call edges · generated ${GRAPH.generatedAt.slice(0, 10)}`;
+
+  // ---------- layout ----------
+  const PILL_H = 24, PILL_GAP = 6, G_PAD = 8, G_HEAD = 22, G_GAP = 16, COL_GAP = 120, TOP = 34, CHAR = 7.3;
+  const state = { showExt: true, sel: null, hover: null, k: 1, tx: 0, ty: 0, query: "" };
+  let L = null; // current layout
+  const nodeEls = new Map(), edgeEls = new Map();
+
+  function layout() {
+    const nodes = GRAPH.nodes.filter((n) => state.showExt || n.kind !== "external");
+    const vis = new Set(nodes.map((n) => n.id));
+    const edges = GRAPH.edges.filter((e) => vis.has(e.from) && vis.has(e.to));
+    const layers = GRAPH.layers.filter((l) => nodes.some((n) => n.layer === l));
+    const pos = new Map(), groups = [], cols = [];
+    let x = G_PAD, maxY = 0;
+
+    layers.forEach((layer, ci) => {
+      const inLayer = nodes.filter((n) => n.layer === layer);
+      const gs = [], gm = new Map();
+      for (const n of inLayer) {
+        let g = gm.get(n.group);
+        if (!g) { g = { name: n.group, title: groupTitle(n.group), nodes: [], idx: gs.length }; gm.set(n.group, g); gs.push(g); }
+        g.nodes.push(n);
+      }
+      const w = Math.ceil(Math.max(120, ...inLayer.map((n) => shortLabel(n).length * CHAR + 20), ...gs.map((g) => g.title.length * 6.8 - 2 * G_PAD + 6)));
+      // Order groups by the average height of their callers in earlier columns (fewer crossings).
+      for (const g of gs) {
+        const ys = [];
+        for (const n of g.nodes) for (const e of inE.get(n.id) || []) { const p = pos.get(e.from); if (p && p.col < ci) ys.push(p.y); }
+        g.bary = ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : Infinity;
+      }
+      if (ci > 0) gs.sort((a, b) => a.bary - b.bary || a.idx - b.idx);
+
+      let y = TOP;
+      for (const g of gs) {
+        const h = G_HEAD + G_PAD + g.nodes.length * (PILL_H + PILL_GAP) - PILL_GAP + G_PAD;
+        groups.push({ name: g.name, title: g.title, x: x - G_PAD, y, w: w + 2 * G_PAD, h });
+        g.nodes.forEach((n, i) => pos.set(n.id, { x, y: y + G_HEAD + G_PAD + i * (PILL_H + PILL_GAP), w, h: PILL_H, col: ci }));
+        y += h + G_GAP;
+      }
+      maxY = Math.max(maxY, y);
+      cols.push({ layer, x: x - G_PAD, w: w + 2 * G_PAD });
+      x += w + 2 * G_PAD + COL_GAP;
+    });
+    return { nodes, edges, pos, groups, cols, width: x - COL_GAP, height: maxY };
+  }
+
+  function el(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  function edgePath(s, t) {
+    const y1 = s.y + s.h / 2, y2 = t.y + t.h / 2;
+    if (t.col > s.col) {
+      const x1 = s.x + s.w, x2 = t.x, c = Math.max(40, (x2 - x1) * 0.5);
+      return `M${x1},${y1} C${x1 + c},${y1} ${x2 - c},${y2} ${x2},${y2}`;
+    }
+    if (t.col === s.col) {
+      const x1 = s.x + s.w, x2 = t.x + t.w, b = 26 + Math.min(70, Math.abs(y2 - y1) * 0.2);
+      return `M${x1},${y1} C${x1 + b},${y1} ${x2 + b},${y2} ${x2},${y2}`;
+    }
+    const x1 = s.x, x2 = t.x + t.w;
+    return `M${x1},${y1} C${x1 - 70},${y1} ${x2 + 70},${y2} ${x2},${y2}`;
+  }
+
+  function render() {
+    L = layout();
+    gLayer.replaceChildren(); eLayer.replaceChildren(); nLayer.replaceChildren();
+    nodeEls.clear(); edgeEls.clear();
+
+    for (const c of L.cols) el("text", { class: "col-title", x: c.x + 2, y: 14 }, gLayer).textContent = c.layer;
+    for (const g of L.groups) {
+      const grp = el("g", { class: "grp" }, gLayer);
+      el("rect", { x: g.x, y: g.y, width: g.w, height: g.h, rx: 8 }, grp);
+      const t = el("text", { x: g.x + G_PAD + 2, y: g.y + 17 }, grp);
+      if (g.title.startsWith("class ")) {
+        el("tspan", { class: "kw" }, t).textContent = "class ";
+        el("tspan", { class: "nm" }, t).textContent = g.title.slice(6);
+      } else t.textContent = g.title;
+    }
+    for (const e of L.edges) {
+      const p = el("path", { class: "edge" + (e.dynamic ? " dyn" : ""), d: edgePath(L.pos.get(e.from), L.pos.get(e.to)), "marker-end": "url(#m-base)" }, eLayer);
+      edgeEls.set(key(e), p);
+    }
+    for (const n of L.nodes) {
+      const p = L.pos.get(n.id);
+      const g = el("g", { class: `node k-${n.kind}`, tabindex: 0, role: "button", "data-id": n.id, "aria-label": `${KIND[n.kind]} ${n.label}` }, nLayer);
+      el("rect", { x: p.x, y: p.y, width: p.w, height: p.h, rx: 5 }, g);
+      el("text", { x: p.x + 9, y: p.y + 16 }, g).textContent = shortLabel(n);
+      g.addEventListener("pointerenter", () => { if (!drag) { state.hover = n.id; applyFocus(); } });
+      g.addEventListener("pointerleave", () => { state.hover = null; applyFocus(); });
+      g.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); select(n.id); } });
+      nodeEls.set(n.id, g);
+    }
+    applyFocus();
+    applySearch();
+  }
+
+  // ---------- highlighting ----------
+  function applyFocus() {
+    const id = state.hover || state.sel;
+    svg.classList.toggle("has-focus", !!id);
+    for (const g of nodeEls.values()) g.classList.remove("sel", "callee", "caller");
+    for (const p of edgeEls.values()) { p.classList.remove("out", "in"); p.setAttribute("marker-end", "url(#m-base)"); }
+    if (!id) return;
+    nodeEls.get(id)?.classList.add("sel");
+    for (const [list, cls, other] of [[outE.get(id) || [], "out", "to"], [inE.get(id) || [], "in", "from"]]) {
+      for (const e of list) {
+        const p = edgeEls.get(key(e));
+        if (p) { p.classList.add(cls); p.setAttribute("marker-end", `url(#m-${cls})`); eLayer.appendChild(p); }
+        nodeEls.get(e[other])?.classList.add(cls === "out" ? "callee" : "caller");
+      }
+    }
+  }
+
+  function applySearch() {
+    const q = state.query.trim().toLowerCase();
+    svg.classList.toggle("searching", !!q);
+    for (const [id, g] of nodeEls) g.classList.toggle("match", !!q && byId.get(id).label.toLowerCase().includes(q));
+  }
+
+  // ---------- selection + panel ----------
+  function select(id, { reveal = false } = {}) {
+    if (id && !nodeEls.has(id) && byId.get(id)?.kind === "external") { state.showExt = true; $("#ext").checked = true; render(); }
+    state.sel = id;
+    applyFocus();
+    renderPanel();
+    if (id && reveal) ensureVisible(id);
+  }
+
+  function refItem(e, dir) {
+    const otherId = dir === "out" ? e.to : e.from;
+    const o = byId.get(otherId);
+    const meta = [
+      e.count > 1 ? `${e.count} calls` : "1 call",
+      `line${e.lines.length > 1 ? "s" : ""} ${e.lines.join(", ")}${dir === "in" && o.file ? " of " + o.file.replace(/^src\//, "") : ""}`,
+      e.dynamic ? "through interface" : "",
+    ].filter(Boolean).join(" · ");
+    return `<li><button type="button" class="ref" data-goto="${esc(otherId)}"><span class="sw ${dir}"></span><span class="nm">${esc(o.label)}</span><span class="meta">${esc(meta)}</span></button></li>`;
+  }
+
+  function sortRefs(list, field) {
+    return [...list].sort((a, b) => {
+      const A = byId.get(a[field]), B = byId.get(b[field]);
+      return (A.kind === "external") - (B.kind === "external") || A.label.localeCompare(B.label);
+    });
+  }
+
+  function renderPanel() {
+    const id = state.sel;
+    if (!id) {
+      const starts = ["cli chat", "Agent.run", "RepoIndex.sync", "propose_edit", "LLM.chat"].filter((s) => byId.has(s));
+      panel.innerHTML = `
+        <p class="eyebrow">Overview</p>
+        <h2>How the assistant's code connects</h2>
+        <p>Each box is a function or method in <span class="code">src/</span>, grouped by class or file. Columns run from the CLI on the left to external libraries on the right, and every arrow is a call.</p>
+        <p>Select a node to see what it calls and what calls it. Drag to pan, scroll to zoom.</p>
+        <div class="section"><h3>Good places to start</h3>
+          <div class="chips">${starts.map((s) => `<button type="button" class="chip" data-goto="${esc(s)}">${esc(s)}</button>`).join("")}</div>
+        </div>`;
+    } else {
+      const n = byId.get(id);
+      const outs = sortRefs(outE.get(id) || [], "to"), ins = sortRefs(inE.get(id) || [], "from");
+      const where = n.kind === "external" ? (n.group === "node built-ins" ? "Node built-in" : "npm package") : groupTitle(n.group);
+      panel.innerHTML = `
+        <p class="eyebrow">${esc(KIND[n.kind])} · ${esc(where)}</p>
+        <h2 class="code">${esc(n.label)}</h2>
+        ${n.file ? `<p class="loc code">${esc(n.file)}:${n.line}</p>` : ""}
+        <div class="section"><h3>Calls <span class="count">${outs.length}</span></h3>
+          ${outs.length ? `<ul class="refs">${outs.map((e) => refItem(e, "out")).join("")}</ul>` : `<p class="none">${n.kind === "external" ? "Outside this repo." : "Nothing. It doesn't call other code in this repo or its libraries."}</p>`}
+        </div>
+        <div class="section"><h3>Called by <span class="count">${ins.length}</span></h3>
+          ${ins.length ? `<ul class="refs">${ins.map((e) => refItem(e, "in")).join("")}</ul>` : `<p class="none">${n.kind === "cli" || n.kind === "module" ? "Runs from the command line or when the module loads." : "No direct callers found."}</p>`}
+        </div>
+        <div class="panel-actions"><button type="button" class="btn" id="clear">Clear selection</button></div>`;
+      $("#clear").addEventListener("click", () => select(null));
+    }
+    for (const b of panel.querySelectorAll("[data-goto]")) b.addEventListener("click", () => select(b.dataset.goto, { reveal: true }));
+  }
+
+  // ---------- pan / zoom ----------
+  function applyTransform() { world.setAttribute("transform", `translate(${state.tx},${state.ty}) scale(${state.k})`); }
+  function fit() {
+    const r = canvas.getBoundingClientRect();
+    const W = L.width + 60, H = L.height + 40;
+    state.k = Math.max(0.12, Math.min(r.width / W, r.height / H, 1.15));
+    state.tx = (r.width - L.width * state.k) / 2;
+    state.ty = Math.max(10, (r.height - L.height * state.k) / 2);
+    applyTransform();
+  }
+  function zoomAt(f, px, py) {
+    const k = Math.max(0.12, Math.min(3, state.k * f));
+    f = k / state.k;
+    state.tx = px - (px - state.tx) * f;
+    state.ty = py - (py - state.ty) * f;
+    state.k = k;
+    applyTransform();
+  }
+  function ensureVisible(id) {
+    const p = L.pos.get(id); if (!p) return;
+    const r = canvas.getBoundingClientRect();
+    const sx = state.tx + p.x * state.k, sy = state.ty + p.y * state.k;
+    if (sx < 20 || sy < 20 || sx + p.w * state.k > r.width - 20 || sy + p.h * state.k > r.height - 20) {
+      state.tx = r.width / 2 - (p.x + p.w / 2) * state.k;
+      state.ty = r.height / 2 - (p.y + p.h / 2) * state.k;
+      applyTransform();
+    }
+  }
+
+  let drag = null;
+  canvas.addEventListener("pointerdown", (ev) => {
+    if (ev.target.closest(".zoom") || ev.button !== 0) return;
+    drag = { x: ev.clientX, y: ev.clientY, tx: state.tx, ty: state.ty, moved: false, node: ev.target.closest(".node")?.dataset.id ?? null };
+    canvas.setPointerCapture(ev.pointerId);
+  });
+  canvas.addEventListener("pointermove", (ev) => {
+    if (!drag) return;
+    const dx = ev.clientX - drag.x, dy = ev.clientY - drag.y;
+    if (!drag.moved && Math.hypot(dx, dy) > 4) { drag.moved = true; canvas.classList.add("dragging"); }
+    if (drag.moved) { state.tx = drag.tx + dx; state.ty = drag.ty + dy; applyTransform(); }
+  });
+  const endDrag = (ev) => {
+    if (!drag) return;
+    if (!drag.moved && ev.type === "pointerup") select(drag.node && drag.node !== state.sel ? drag.node : drag.node ? state.sel : null);
+    canvas.classList.remove("dragging");
+    drag = null;
+  };
+  canvas.addEventListener("pointerup", endDrag);
+  canvas.addEventListener("pointercancel", endDrag);
+  canvas.addEventListener("wheel", (ev) => {
+    ev.preventDefault();
+    const r = canvas.getBoundingClientRect();
+    zoomAt(Math.exp(-ev.deltaY * 0.0015), ev.clientX - r.left, ev.clientY - r.top);
+  }, { passive: false });
+  const zoomCenter = (f) => { const r = canvas.getBoundingClientRect(); zoomAt(f, r.width / 2, r.height / 2); };
+  $("#zin").addEventListener("click", () => zoomCenter(1.25));
+  $("#zout").addEventListener("click", () => zoomCenter(0.8));
+  $("#zfit").addEventListener("click", fit);
+
+  // ---------- controls ----------
+  $("#q").addEventListener("input", (ev) => { state.query = ev.target.value; applySearch(); });
+  $("#q").addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") {
+      const q = state.query.trim().toLowerCase();
+      const hit = L.nodes.find((n) => n.label.toLowerCase() === q) || L.nodes.find((n) => n.label.toLowerCase().includes(q));
+      if (hit) select(hit.id, { reveal: true });
+    } else if (ev.key === "Escape") { ev.target.value = ""; state.query = ""; applySearch(); }
+  });
+  $("#ext").addEventListener("change", (ev) => {
+    state.showExt = ev.target.checked;
+    if (state.sel && !state.showExt && byId.get(state.sel).kind === "external") state.sel = null;
+    render(); renderPanel(); fit();
+  });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && document.activeElement !== $("#q")) select(null); });
+
+  // ---------- start: open on the agent loop so the first view shows a real call path ----------
+  render();
+  fit();
+  select(byId.has("Agent.run") ? "Agent.run" : null);
+})();
+</script>
