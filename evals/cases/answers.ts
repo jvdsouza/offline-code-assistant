@@ -1,0 +1,32 @@
+import type { AnswerCase } from "../lib/types.js";
+
+/** End-to-end questions: the full agent answers, then rules (and optionally a judge) grade it. */
+export const answerCases: AnswerCase[] = [
+  { id: "a01-token-ttl", question: "How long is an access token valid for?",
+    rules: { mustInclude: ["\\b15\\b|fifteen|900"], citeAnyOf: ["src/config.ts", "src/auth/tokens.ts"] },
+    reference: "15 minutes: config.tokenTtlSeconds = 15 * 60 in src/config.ts, used by signToken. (Refresh tokens last 7 days.)" },
+  { id: "a02-password-hashing", question: "Which algorithm hashes passwords, and how is the comparison protected against timing attacks?",
+    rules: { mustInclude: ["scrypt", "timingSafeEqual|constant[- ]time"] },
+    reference: "scrypt (N=16384, random 16-byte salt, 64-byte key) in hashPassword; verifyPassword compares with crypto.timingSafeEqual, a constant-time comparison." },
+  { id: "a03-invalid-transition-status", question: "What HTTP status code does the API return for a task status change that the workflow doesn't allow?",
+    rules: { mustInclude: ["\\b422\\b"] },
+    reference: "422, from InvalidTransitionError (thrown by TaskService.updateStatus when canTransition is false), mapped by toErrorResponse." },
+  { id: "a04-todo-to-done", question: "Can a task move directly from todo to done?",
+    rules: { mustInclude: ["\\b(no|not|cannot|can't|isn't)\\b", "in[_ ]progress"] },
+    reference: "No. From todo a task can only move to in_progress or archived (ALLOWED_TRANSITIONS); it must go through in_progress before done." },
+  { id: "a05-webhook-attempts", question: "How many times is a webhook delivery attempted before giving up?",
+    rules: { mustInclude: ["\\b5\\b|five"] },
+    reference: "Up to 5 attempts (config.webhook.maxAttempts), with exponential backoff and full jitter between 250 ms base and 8000 ms max. After that the failure is only logged." },
+  { id: "a06-max-page-size", question: "What is the maximum page size when listing tasks, and what is the default?",
+    rules: { mustInclude: ["\\b100\\b", "\\b20\\b"] },
+    reference: "Maximum 100 (MAX_PAGE_SIZE), default 20 (DEFAULT_PAGE_SIZE), in src/db/taskRepo.ts listTasks." },
+  { id: "a07-redacted-fields", question: "Which fields are redacted from log output?",
+    rules: { mustInclude: ["password", "\\btoken\\b", "authorization", "refreshToken"] },
+    reference: "password, token, authorization and refreshToken (REDACTED_KEYS in src/lib/logger.ts); their values become \"[redacted]\", including in nested objects." },
+  { id: "a08-rate-limited-response", question: "What does the API send back when a client exceeds the rate limit?",
+    rules: { mustInclude: ["\\b429\\b", "retry-after"] },
+    reference: "429 Too Many Requests with a Retry-After header giving the seconds until a token is available (RateLimitedError, handled in toErrorResponse)." },
+  { id: "a09-clock-skew", question: "How much clock skew is tolerated when checking whether a token has expired?",
+    rules: { mustInclude: ["\\b30\\b|thirty"] },
+    reference: "30 seconds: verifyToken rejects only when now > exp + 30." },
+];

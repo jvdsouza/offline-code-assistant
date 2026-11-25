@@ -3,3 +3,6 @@ dist/
 .env
 # Local vector indexes (default data dir is ~/.offline-code-assistant, but allow a local one too)
 .oca/
+# Eval suite: fixture index and run reports
+evals/.index/
+evals/results/

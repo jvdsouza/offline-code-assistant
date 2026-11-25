@@ -1,0 +1,11 @@
+{
+  // Type-checks everything (app, scripts, evals, the eval fixture and tests). Build output still uses tsconfig.json.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    "sourceMap": false
+  },
+  "include": ["src/**/*.ts", "scripts/**/*.ts", "evals/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

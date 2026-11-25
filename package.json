@@ -10,8 +10,9 @@
     "oca": "tsx src/cli.ts",
     "dev": "tsx src/cli.ts chat .",
     "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.check.json",
     "callgraph": "tsx scripts/callgraph.ts",
+    "eval": "tsx evals/run.ts",
     "test": "vitest run"
   },
   "engines": {

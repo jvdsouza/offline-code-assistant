@@ -34,10 +34,15 @@ export class RepoIndex {
     private llm: LLM,
   ) {}
 
-  static async open(root: string, llm = new LLM()): Promise<RepoIndex> {
+  /**
+   * @param opts.indexDir Store the index here instead of under `config.dataDir`.
+   *   Index contents use repo-relative paths, so an index dir can be copied
+   *   along with a copy of the repo (the eval suite relies on this).
+   */
+  static async open(root: string, llm = new LLM(), opts: { indexDir?: string } = {}): Promise<RepoIndex> {
     const abs = path.resolve(root);
     const id = crypto.createHash("sha1").update(abs.toLowerCase()).digest("hex").slice(0, 10);
-    const dir = path.join(config.dataDir, `${path.basename(abs)}-${id}`);
+    const dir = opts.indexDir ? path.resolve(opts.indexDir) : path.join(config.dataDir, `${path.basename(abs)}-${id}`);
     await fs.mkdir(dir, { recursive: true });
 
     const manifest: Manifest = await fs

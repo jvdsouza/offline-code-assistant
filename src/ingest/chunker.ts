@@ -23,7 +23,7 @@ export function languageFor(path: string): string {
   return "text";
 }
 
-export function chunkFile(path: string, text: string, maxChars = config.ingest.maxChunkChars): Chunk[] {
+export function chunkFile(path: string, text: string, maxChars: number = config.ingest.maxChunkChars): Chunk[] {
   if (TS_LIKE.test(path)) {
     try {
       return chunkTypeScript(path, text, maxChars);

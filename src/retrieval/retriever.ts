@@ -1,6 +1,9 @@
 import type { RepoIndex } from "../ingest/indexer.js";
 import type { SearchHit } from "../store/vectorStore.js";
 
+/** Chunks scoring below this (cosine similarity) are not shown to the model. */
+export const DEFAULT_MIN_SCORE = 0.3;
+
 /**
  * Retrieval step of RAG. Kept separate from the index so it is the obvious place
  * to add reranking, hybrid (keyword + vector) search, MMR de-duplication, etc.
@@ -10,7 +13,7 @@ export class Retriever {
 
   async retrieve(query: string, opts: { k?: number; pathPrefix?: string; minScore?: number } = {}): Promise<SearchHit[]> {
     const hits = await this.index.search(query, opts.k, opts.pathPrefix);
-    const min = opts.minScore ?? 0.3;
+    const min = opts.minScore ?? DEFAULT_MIN_SCORE;
     return hits.filter((h) => h.score >= min);
   }
 

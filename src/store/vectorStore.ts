@@ -1,6 +1,8 @@
 import * as lancedb from "@lancedb/lancedb";
 
-export interface ChunkRow {
+// A `type` (not an interface) so it is assignable to LanceDB's Record<string, unknown>
+// without an index signature, which would make Omit<> below drop every named field.
+export type ChunkRow = {
   id: string;
   path: string;
   language: string;
@@ -10,12 +12,11 @@ export interface ChunkRow {
   end_line: number;
   text: string;
   vector: number[];
-  [key: string]: unknown;
-}
+};
 
-export interface SearchHit extends Omit<ChunkRow, "vector"> {
+export type SearchHit = Omit<ChunkRow, "vector"> & {
   score: number; // cosine similarity, higher = better
-}
+};
 
 const TABLE = "chunks";
 
